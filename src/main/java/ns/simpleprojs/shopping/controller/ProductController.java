@@ -1,8 +1,8 @@
 package ns.simpleprojs.shopping.controller;
 
-import ns.simpleprojs.shopping.dao.ProductDao;
 import ns.simpleprojs.shopping.exception.ProductNotFoundException;
 import ns.simpleprojs.shopping.model.Product;
+import ns.simpleprojs.shopping.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,22 +15,24 @@ import java.util.List;
 public class ProductController {
 
     @Autowired
-    private ProductDao productDao;
+    private ProductService productService;
 
     @GetMapping({"/", ""})
     public List<Product> getProducts() {
-        return productDao.findAll();
+        return productService.getProducts();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable Long id) {
-        return new ResponseEntity<>(productDao.findById(id).orElseThrow(ProductNotFoundException::new), HttpStatus.OK);
+        try {
+            return productService.getProductById(id);
+        } catch (ProductNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
-    @PostMapping
+    @PostMapping({"/", ""})
     public Product createProduct(@RequestBody String productName) {
-        Product product = new Product();
-        product.setName(productName);
-        return productDao.save(product);
+        return productService.createProduct(productName);
     }
 }
