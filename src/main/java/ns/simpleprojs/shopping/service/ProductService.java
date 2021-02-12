@@ -35,4 +35,11 @@ public class ProductService {
         return productDao.save(product);
     }
 
+    @Transactional
+    public ResponseEntity<?> deleteProduct(Long id) {
+        Product toDelete = productDao.findById(id).orElseThrow(ProductNotFoundException::new);
+        productDao.delete(toDelete);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
 }

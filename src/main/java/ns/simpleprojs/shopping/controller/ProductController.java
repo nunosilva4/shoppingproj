@@ -35,4 +35,13 @@ public class ProductController {
     public Product createProduct(@RequestBody String productName) {
         return productService.createProduct(productName);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
+        try{
+            return productService.deleteProduct(id);
+        } catch (ProductNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }
